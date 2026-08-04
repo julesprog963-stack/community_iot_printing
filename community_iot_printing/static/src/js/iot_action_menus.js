@@ -3,35 +3,42 @@
 import { makeContext } from "@web/core/context";
 import { session } from "@web/session";
 import { patch } from "@web/core/utils/patch";
+import { user } from "@web/core/user";
 import { ActionMenus } from "@web/search/action_menus/action_menus";
-import { onWillStart, onWillUpdateProps, useState } from "@odoo/owl";
+import { onWillStart, useState } from "@odoo/owl";
 
 patch(ActionMenus.prototype, {
     setup() {
         super.setup(...arguments);
-        this.communityIotState = useState({ items: [] });
-        onWillStart(() => this.loadCommunityIotItems(this.props));
-        onWillUpdateProps((nextProps) => this.loadCommunityIotItems(nextProps));
+        this.communityIotState = useState({ items: [], allowed: false });
+        onWillStart(async () => {
+            this.communityIotState.allowed = await user.hasGroup(
+                "community_iot_printing.group_community_iot_print_user"
+            );
+        });
     },
 
-    async loadCommunityIotItems(props) {
-        const printActions = props.items.print || [];
-        if (!printActions.length) {
+    async loadCommunityIotItems() {
+        // Reuse Odoo's lazy domain filtering before applying the IoT PDF filter.
+        const availableItems = await this.loadAvailablePrintItems();
+        const actionIds = availableItems
+            .filter((item) => item.action?.id)
+            .map((item) => item.action.id);
+        if (!actionIds.length) {
             this.communityIotState.items = [];
             return;
         }
-        const actionIds = printActions.map((action) => action.id);
         const validIds = await this.orm.call(
             "ir.actions.report",
             "get_community_iot_pdf_action_ids",
-            [actionIds, props.resModel]
+            [actionIds, this.props.resModel]
         );
-        this.communityIotState.items = printActions
-            .filter((action) => validIds.includes(action.id))
-            .map((action) => ({
-                action,
-                description: action.name,
-                key: `community-iot-${action.id}`,
+        this.communityIotState.items = availableItems
+            .filter((item) => validIds.includes(item.action?.id))
+            .map((item) => ({
+                action: item.action,
+                description: item.description,
+                key: `community-iot-${item.action.id}`,
             }));
     },
 

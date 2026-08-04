@@ -35,8 +35,7 @@ class IrActionsReport(models.Model):
         records = self.env[res_model].browse(res_ids).exists()
         if len(records) != len(set(res_ids)):
             raise ValidationError(_("One or more selected records no longer exist."))
-        records.check_access_rights("read")
-        records.check_access_rule("read")
+        records.check_access("read")
 
         return {
             "type": "ir.actions.act_window",
@@ -55,6 +54,8 @@ class IrActionsReport(models.Model):
 
     def _check_community_iot_report_groups(self):
         self.ensure_one()
-        groups = self.groups_id if "groups_id" in self._fields else self.env["res.groups"]
-        if groups and not (groups & self.env.user.groups_id):
+        group_field = "groups_id" if "groups_id" in self._fields else "group_ids"
+        groups = self[group_field] if group_field in self._fields else self.env["res.groups"]
+        user_groups = self.env.user.all_group_ids
+        if groups and not (groups & user_groups):
             raise AccessError(_("You are not allowed to use this report."))

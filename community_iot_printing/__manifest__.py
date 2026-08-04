@@ -1,7 +1,7 @@
 {
     "name": "Community IoT Printing",
     "summary": "Print any Odoo PDF report through IoT Box Community.",
-    "version": "17.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Technical/IoT",
     "author": "JDA SOLUTIONS",
     "maintainer": "JDA SOLUTIONS",
