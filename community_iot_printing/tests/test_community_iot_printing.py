@@ -105,6 +105,47 @@ class TestCommunityIotPrinting(TransactionCase):
         with self.assertRaises(ValidationError):
             wizard.action_print()
 
+    def test_print_user_can_read_only_printer_configuration(self):
+        user = self.env["res.users"].create(
+            {
+                "name": "PDF Print ACL User",
+                "login": "pdf_print_acl_user_17",
+                "groups_id": [
+                    Command.set(
+                        [
+                            self.env.ref("base.group_user").id,
+                            self.group.id,
+                        ]
+                    )
+                ],
+            }
+        )
+        box = self.env["community_iot_box.iot_box"].with_user(user).browse(self.box.id)
+        device = self.env["community_iot_box.iot_device"].with_user(user).browse(self.device.id)
+        self.assertEqual(box.read(["name"])[0]["name"], "Global PDF Box")
+        self.assertEqual(device.read(["name"])[0]["name"], "Global A4")
+        with self.assertRaises(AccessError):
+            box.read(["token"])
+        wizard = self.env["community.iot.print.wizard"].with_user(user).create(
+            {
+                "company_id": self.env.company.id,
+                "report_action_id": self.report.id,
+                "res_model": "res.partner",
+                "res_ids_json": json.dumps([self.partner.id]),
+                "device_id": self.device.id,
+                "copies": 1,
+                "filename": "acl-user.pdf",
+            }
+        )
+        with patch.object(
+            type(self.report),
+            "_render_qweb_pdf",
+            autospec=True,
+            return_value=(PDF_BYTES, "pdf"),
+        ):
+            result = wizard.action_print()
+        self.assertEqual(result["tag"], "display_notification")
+
     def test_user_without_group_cannot_open_iot_wizard(self):
         user = self.env["res.users"].create(
             {
