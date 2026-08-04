@@ -10,7 +10,13 @@
     "license": "LGPL-3",
     "price": 0.0,
     "currency": "USD",
-    "images": ["static/description/main_screenshot.gif", "static/description/main_screenshot.png"],
+    "images": [
+        "static/description/main_screenshot.gif",
+        "static/description/main_screenshot.png",
+        "static/description/images/iot_print_menu.png",
+        "static/description/images/iot_print_wizard.png",
+        "static/description/images/iot_print_wizard_odoo19.png",
+    ],
     "depends": ["base", "web", "community_iot_box"],
     "data": [
         "security/community_iot_printing_security.xml",
