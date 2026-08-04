@@ -17,8 +17,8 @@ addon núcleo correspondiente.
 Versión actual de la dependencia núcleo
 ---------------------------------------
 
-Para Odoo 17, descargue **IoT Box Community 17.0.5.0.0** antes de instalar
-este addon: https://apps.odoo.com/apps/modules/17.0/community_iot_box
+Para Odoo 19, descargue **IoT Box Community 19.0.2.0.0** antes de instalar
+este addon: https://apps.odoo.com/apps/modules/19.0/community_iot_box
 
 Inicio rápido
 -------------
