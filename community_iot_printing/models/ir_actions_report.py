@@ -35,8 +35,7 @@ class IrActionsReport(models.Model):
         records = self.env[res_model].browse(res_ids).exists()
         if len(records) != len(set(res_ids)):
             raise ValidationError(_("One or more selected records no longer exist."))
-        records.check_access_rights("read")
-        records.check_access_rule("read")
+        records.check_access("read")
 
         return {
             "type": "ir.actions.act_window",
