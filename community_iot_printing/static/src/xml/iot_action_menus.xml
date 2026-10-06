@@ -19,4 +19,42 @@
             </div>
         </xpath>
     </t>
+    <t t-name="community_iot_printing.CogMenu" t-inherit="web.CogMenu" t-inherit-mode="extension">
+        <xpath expr="//div[@t-if='hasItems']" position="inside">
+            <div t-if="communityIotState.allowed and props.items.print?.length" class="d-inline-block">
+                <Dropdown beforeOpen.bind="loadCommunityIotItems">
+                    <button class="btn btn-outline-primary" aria-label="IoT Print">
+                        <i class="fa fa-print me-1"/>
+                        <span class="o_dropdown_title">IoT Print</span>
+                    </button>
+                    <t t-set-slot="content">
+                        <t t-foreach="communityIotState.items" t-as="item" t-key="item.key">
+                            <DropdownItem class="'o_menu_item'" onSelected="() => this.onCommunityIotItemSelected(item)">
+                                <t t-esc="item.description"/>
+                            </DropdownItem>
+                        </t>
+                    </t>
+                </Dropdown>
+            </div>
+        </xpath>
+    </t>
+    <t t-name="community_iot_printing.FormCogMenu" t-inherit="web.FormCogMenu" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('o_cp_action_menus')]" position="inside">
+            <div t-if="communityIotState.allowed and props.items.print?.length" class="d-inline-block">
+                <Dropdown beforeOpen.bind="loadCommunityIotItems">
+                    <button class="btn btn-outline-primary" aria-label="IoT Print">
+                        <i class="fa fa-print me-1"/>
+                        <span class="o_dropdown_title">IoT Print</span>
+                    </button>
+                    <t t-set-slot="content">
+                        <t t-foreach="communityIotState.items" t-as="item" t-key="item.key">
+                            <DropdownItem class="'o_menu_item'" onSelected="() => this.onCommunityIotItemSelected(item)">
+                                <t t-esc="item.description"/>
+                            </DropdownItem>
+                        </t>
+                    </t>
+                </Dropdown>
+            </div>
+        </xpath>
+    </t>
 </templates>
