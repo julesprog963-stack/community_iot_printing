@@ -19,4 +19,23 @@
             </Dropdown>
         </xpath>
     </t>
+    <!-- CogMenu inherits ActionMenus methods but uses a separate template. -->
+    <t t-name="community_iot_printing.CogMenu" t-inherit="web.CogMenu" t-inherit-mode="extension">
+        <xpath expr="//t[@t-if='printItems.length']" position="after">
+            <Dropdown t-if="communityIotState.items.length">
+                <t t-set-slot="toggler">
+                    <i class="fa fa-print me-1"/> IoT Print
+                </t>
+                <DropdownItem
+                    t-foreach="communityIotState.items"
+                    t-as="item"
+                    t-key="item.key"
+                    class="'text-truncate o_menu_item o_community_iot_report'"
+                    onSelected="() => this.onCommunityIotItemSelected(item)"
+                >
+                    <t t-esc="item.description"/>
+                </DropdownItem>
+            </Dropdown>
+        </xpath>
+    </t>
 </templates>
